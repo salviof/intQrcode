@@ -1,26 +1,26 @@
 package br.com.competeaqui.pix;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  * Testes para os construtores de {@link DadosEnvioPix}.
+ *
  * @author Manoel Campos da Silva Filho
  */
 class DadosEnvioPixConstrutoresTest {
+
     private static final String NOME_DESTINATARIO = "Manoel";
     private static final String CHAVE_DESTINATARIO = "11111111111";
     private static final BigDecimal VALOR = new BigDecimal(1);
     private static final String CIDADE_REMETENTE = "Palmas";
     private static final String DESCRICAO = "PIX em Java";
-    private DadosEnvioPix instance;
+    private static DadosEnvioPix instance;
 
-    @BeforeEach
+    @Before
     void setUp() {
         instance = new DadosEnvioPix(
                 NOME_DESTINATARIO, CHAVE_DESTINATARIO,
@@ -29,8 +29,8 @@ class DadosEnvioPixConstrutoresTest {
 
     @Test
     void valor() {
-        assertEquals(new BigDecimal(1), instance.valor());
-        assertSame(VALOR, instance.valor());
+        assertEquals(new BigDecimal(1), instance.getValor());
+        assertSame(VALOR, instance.getValor());
     }
 
     @Test
@@ -40,29 +40,29 @@ class DadosEnvioPixConstrutoresTest {
 
     @Test
     void nomeDestinatario() {
-        assertEquals(NOME_DESTINATARIO, instance.nomeDestinatario());
+        assertEquals(NOME_DESTINATARIO, instance.getNomeDestinatario());
     }
 
     @Test
     void chaveDestinatario() {
-        assertEquals(CHAVE_DESTINATARIO, instance.chaveDestinatario());
+        assertEquals(CHAVE_DESTINATARIO, instance.getChaveDestinatario());
     }
 
     @Test
     void cidadeRemetente() {
-        assertEquals(CIDADE_REMETENTE, instance.cidadeRemetente());
+        assertEquals(CIDADE_REMETENTE, instance.getCidadeRemetente());
     }
 
     @Test
     void descricao() {
-        assertEquals(DESCRICAO, instance.descricao());
+        assertEquals(DESCRICAO, instance.getDescricao());
     }
 
     @Test
     void descricaoVazia() {
-        final var instance = new DadosEnvioPix(
+        DadosEnvioPix instance = new DadosEnvioPix(
                 NOME_DESTINATARIO, CHAVE_DESTINATARIO,
                 VALOR, CIDADE_REMETENTE);
-        assertEquals("", instance.descricao());
+        assertEquals("", instance.getDescricao());
     }
 }

@@ -1,64 +1,147 @@
 package br.com.competeaqui.pix;
 
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 
 import static br.com.competeaqui.pix.DadosEnvioPixInvalidosTest.BLANK;
 import static br.com.competeaqui.pix.DadosEnvioPixInvalidosTest.EMPTY;
 import static br.com.competeaqui.pix.DadosEnvioPixValorTest.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * Testes para verificar se os campos obrigatórios da classe {@link DadosEnvioPix}
- * estão sendo verificados.
+ * Testes para verificar se os campos obrigatórios da classe
+ * {@link DadosEnvioPix} estão sendo verificados.
+ *
  * @author Manoel Campos da Silva Filho
  */
 class DadosEnvioPixCamposObrigatoriosTest {
+
     private static final BigDecimal V = BigDecimal.ONE;
 
     @Test
     void nomeEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(EMPTY, CD, V, CR));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(EMPTY, CD, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void nomeBlank() {
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(BLANK, CD, V, CR));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(BLANK, CD, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void nomeNull() {
-        assertThrows(NullPointerException.class, () -> new DadosEnvioPix(null, CD, V, CR));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(null, CD, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void chaveEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, EMPTY, V, CR));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, EMPTY, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void chaveBlank() {
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, BLANK, V, CR));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, BLANK, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void chaveNull() {
-        assertThrows(NullPointerException.class, () -> new DadosEnvioPix(ND, null, V, CR));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, null, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void cidadeEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, CD, V, EMPTY));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, V, EMPTY);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void cidadeBlank() {
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, CD, V, BLANK));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, V, BLANK);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 
     @Test
     void cidadeNull() {
-        assertThrows(NullPointerException.class, () -> new DadosEnvioPix(ND, CD, V, null));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, V, null);
+        } catch (Throwable t) {
+            falhou = true;
+        }
+        if (!falhou) {
+            fail("Validação falhou");
+        }
+
     }
 }

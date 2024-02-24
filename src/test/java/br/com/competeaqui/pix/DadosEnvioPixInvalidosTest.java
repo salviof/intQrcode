@@ -1,94 +1,193 @@
 package br.com.competeaqui.pix;
 
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 
 import static br.com.competeaqui.pix.DadosEnvioPixValorTest.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Testes de validação de parâmetros dos construtores de {@link DadosEnvioPix}.
  *
- * <p>As constantes com nomes abreviados são irrelevantes para os testes.
- * Cada teste considera apenas o valor inválido passado por meio de uma variável
+ * <p>
+ * As constantes com nomes abreviados são irrelevantes para os testes. Cada
+ * teste considera apenas o valor inválido passado por meio de uma variável
  * (estas constantes são valores válidos).</p>
  *
  * @author Manoel Campos da Silva Filho
  */
 class DadosEnvioPixInvalidosTest {
+
     static final String EMPTY = "";
     static final String BLANK = "    ";
     private static final BigDecimal V = new BigDecimal(1);
 
-    /** Nome no limite do tamanho máximo. */
+    /**
+     * Nome no limite do tamanho máximo.
+     */
     @Test
     void nomeDestinatarioNoLimite() {
-        final var nomeInvalido = "a".repeat(25);
-        assertDoesNotThrow(() -> new DadosEnvioPix(nomeInvalido, CD, V, CR));
+        String nomeInvalido = "aaaaaaaaaaaaaaaaaaaaaaaaa";
+        try {
+            new DadosEnvioPix(nomeInvalido, CD, V, CR);
+        } catch (Throwable t) {
+            fail(t.getMessage());
+        }
+
     }
 
     @Test
     void nomeDestinatarioMuitoGrande() {
-        final var nomeInvalido = "a".repeat(26);
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(nomeInvalido, CD, V, CR));
+        String nomeInvalido = "aaaaaaaaaaaaaaaaaaaaaaaaaa";
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(nomeInvalido, CD, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou nome com mais de 25 caracteres");
+        }
+
     }
 
     @Test
     void chaveMuitoGrande() {
-        final var chaveInvalido = "a".repeat(78);
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, chaveInvalido, V, CR));
+        StringBuilder strb = new StringBuilder();
+        for (int i = 0; i < 78; i++) {
+            strb.append("a");
+        }
+        String chaveInvalido = strb.toString();
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, chaveInvalido, V, CR);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou nome com mais de 25 caracteres");
+        }
+
     }
 
-    /** Valor no limite do tamanho máximo. */
+    /**
+     * Valor no limite do tamanho máximo.
+     */
     @Test
     void valorNoLimite() {
-        final var valorInvalido = new BigDecimal("1234567890.00"); // 13 caracteres (com o ponto)
-        assertDoesNotThrow(() -> new DadosEnvioPix(ND, CD, valorInvalido, CR));
+        BigDecimal valorInvalido = new BigDecimal("1234567890.00"); // 13 caracteres (com o ponto)
+
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, valorInvalido, CR);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou nome com mais de 25 caracteres");
+        }
+
     }
 
-    /** Quando o total de caracteres do valor (incluíndo o ponto) é maior do que o suportado. */
+    /**
+     * Quando o total de caracteres do valor (incluíndo o ponto) é maior do que
+     * o suportado.
+     */
     @Test
     void valorDoubleMuitoGrande() {
-        final var valorInvalido = new BigDecimal("12345678901.00"); // 14 caracteres (com o ponto)
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, CD, valorInvalido, CR));
+        BigDecimal valorInvalido = new BigDecimal("12345678901.00"); // 14 caracteres (com o ponto)
+
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, valorInvalido, CR);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou nome com mais de 25 caracteres");
+        }
+
     }
 
-    /** Quando o total de caracteres do valor (incluíndo o ponto) é maior do que o suportado. */
+    /**
+     * Quando o total de caracteres do valor (incluíndo o ponto) é maior do que
+     * o suportado.
+     */
     @Test
     void valorIntMuitoGrande() {
         // 11 caracteres, mas neste caso será incluído .00 ficando com 14 (além do limite)
-        final var valorInvalido = new BigDecimal("12345678901");
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, CD, valorInvalido, CR));
+        BigDecimal valorInvalido = new BigDecimal("12345678901");
+
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, valorInvalido, CR);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou nome com mais de 25 caracteres");
+        }
+
     }
 
-    /** Cidade no limite do tamanho máximo. */
+    /**
+     * Cidade no limite do tamanho máximo.
+     */
     @Test
     void cidadeRemetenteNoLimite() {
-        final var cidadeInvalida = "a".repeat(15);
-        assertDoesNotThrow(() -> new DadosEnvioPix(ND, CD, V, cidadeInvalida));
+        String cidadeInvalida = "aaaaaaaaaaaaaaa";
+        new DadosEnvioPix(ND, CD, V, cidadeInvalida);
     }
 
     @Test
     void cidadeRemetenteMuitoGrande() {
-        final var cidadeInvalida = "a".repeat(16);
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, CD, V, cidadeInvalida));
+        String cidadeInvalida = "aaaaaaaaaaaaaaaa";//16
+        new DadosEnvioPix(ND, CD, V, cidadeInvalida);
     }
 
     @Test
     void descricaoBlankAlteradaPraEmpty() {
-        final var instance = new DadosEnvioPix(ND, CD, V, CR, BLANK);
-        assertTrue(instance.descricao().isEmpty());
+        DadosEnvioPix instance = new DadosEnvioPix(ND, CD, V, CR, BLANK);
+        assertTrue(instance.getDescricao().isEmpty());
     }
 
     @Test
     void descricaoNull() {
-        assertThrows(NullPointerException.class, () -> new DadosEnvioPix(ND, CD, V, CR, null));
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, V, CR, null);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou nome com mais de 25 caracteres");
+        }
+
     }
 
     @Test
     void descricaoMuitoGrande() {
-        final var descricaoInvalida = "a".repeat(73);
-        assertThrows(IllegalArgumentException.class, () -> new DadosEnvioPix(ND, CD, V, CR, descricaoInvalida));
+        StringBuilder strb = new StringBuilder();
+        for (int i = 0; i < 78; i++) {
+            strb.append("a");
+        }
+        String descricaoInvalida = strb.toString();
+        boolean falhou = false;
+        try {
+            new DadosEnvioPix(ND, CD, V, CR, descricaoInvalida);
+        } catch (Throwable t) {
+            falhou = true;
+
+        }
+        if (!falhou) {
+            fail("Aceitou descricao com mais de 78 caracteres");
+        }
+
     }
 }

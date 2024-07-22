@@ -26,11 +26,11 @@ import static java.util.Objects.requireNonNull;
  */
 public class DadosEnvioPix {
 
-    String nomeDestinatario;
-    String chaveDestinatario;
-    BigDecimal valor;
-    String cidadeRemetente;
-    String descricao;
+    private String nomeDestinatario;
+    private String chaveDestinatario;
+    private BigDecimal valor;
+    private String cidadeRemetente;
+    private String descricao;
 
     public DadosEnvioPix(String nomeDestinatario, String chaveDestinatario, BigDecimal valor, String cidadeRemetente) {
         this(nomeDestinatario, chaveDestinatario, valor, cidadeRemetente, "");
@@ -40,6 +40,7 @@ public class DadosEnvioPix {
         nomeDestinatario = pNnomeDestinatario;
         chaveDestinatario = pChaveDestinatario;
         valor = pValor;
+        cidadeRemetente = pCidadeRemetente;
         descricao = pDescricao;
     }
 

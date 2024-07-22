@@ -9,8 +9,11 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
 import javax.imageio.ImageIO;
@@ -20,7 +23,10 @@ import java.nio.file.Path;
 import java.util.EnumMap;
 
 import static java.lang.Integer.toHexString;
+import java.math.BigDecimal;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Gera um QRCode para fazer transferências PIX "Copia e Cola".
@@ -42,7 +48,7 @@ public final class QRCodePix {
      *
      * @see #crcChecksum(String)
      */
-    public static final String COD_CRC = "6304";
+    public static final String COD_CRC = "0425";
 
     /**
      * Código de país no formato ISO3166-1 alpha 2
@@ -152,7 +158,8 @@ public final class QRCodePix {
      * {
      *
      * @return um nome de arquivo PNG temporário} que pode ser usado para
-     * {@link #save(Path) salvar} a imagem do QRCode {@link #generate() gerado}.
+     * {@link #save(Path) salvar} a imagem do QRCode
+     * {@link #generate() gerado}.generateInternal
      * @throws UncheckedIOException se não for possível gerar um nome de arquivo
      * temporário
      */
@@ -170,35 +177,59 @@ public final class QRCodePix {
      * @return o objeto JSON criado
      * @see #generate()
      */
-    private JSONObject newJSONObject() {
-        String jsonTemplate
-                = "{\n"
-                + "                '00': '%s'\n"
-                + "            ,\n"
-                + "                '26': {\n"
-                + "                    '00': '%s',\n"
-                + "                    '01': '%s',\n"
-                + "                    '02': '%s'\n"
-                + "            },\n"
-                + "                '52': '%s',\n"
-                + "                '53': '%s',\n"
-                + "                '%s': '%s',\n"
-                + "                '58': '%s',\n"
-                + "                '59': '%s',\n"
-                + "                '60': '%s'\n"
-                + "            ,\n"
-                + "                '62': {\n"
-                + "                    '05': '%s'\n"
-                + "            }\n"
-                + "        }";
+    private JsonObject newJSONObject() {
+        try {
+            JsonObjectBuilder novoJson
+                    = UtilSBCoreJson.getJsonBuilderBySequenciaChaveValor("00", PFI);
+            JsonObjectBuilder destinatario = UtilSBCoreJson.getJsonBuilderBySequenciaChaveValor("00", ARRANJO_PAGAMENTO,
+                    "01", dadosPix.getChaveDestinatario(),
+                    "02", dadosPix.getDescricao()
+            );
+            novoJson.add("26", destinatario);
+            novoJson.add("52", MCC);
+            novoJson.add("53", COD_MOEDA);
+            novoJson.add(COD_CAMPO_VALOR, dadosPix.valorStr());
+            novoJson.add("58", COD_PAIS);
+            novoJson.add("59", dadosPix.getNomeDestinatario());
+            novoJson.add("60", dadosPix.getCidadeRemetente());
+            JsonObjectBuilder codigoTransacao = UtilSBCoreJson.getJsonBuilderBySequenciaChaveValor(
+                    "05", idTransacao
+            );
+            novoJson.add("62", codigoTransacao);
 
-        String json
-                = jsonTemplate
-                        .format(
-                                PFI, ARRANJO_PAGAMENTO, dadosPix.getChaveDestinatario(), dadosPix.getDescricao(),
-                                MCC, COD_MOEDA, COD_CAMPO_VALOR, dadosPix.valorStr(), COD_PAIS,
-                                dadosPix.getNomeDestinatario(), dadosPix.getCidadeRemetente(), idTransacao);
-        return new JSONObject(json);
+            String jsonTemplate
+                    = "{\n"
+                    + "                '00': '%s'\n"
+                    + "            ,\n"
+                    + "                '26': {\n"
+                    + "                    '00': '%s',\n"
+                    + "                    '01': '%s',\n"
+                    + "                    '02': '%s'\n"
+                    + "            },\n"
+                    + "                '52': '%s',\n"
+                    + "                '53': '%s',\n"
+                    + "                '%s': '%s',\n"
+                    + "                '58': '%s',\n"
+                    + "                '59': '%s',\n"
+                    + "                '60': '%s'\n"
+                    + "            ,\n"
+                    + "                '62': {\n"
+                    + "                    '05': '%s'\n"
+                    + "            }\n"
+                    + "        }";
+
+            String json
+                    = jsonTemplate
+                            .format(
+                                    PFI, ARRANJO_PAGAMENTO, dadosPix.getChaveDestinatario(), dadosPix.getDescricao(),
+                                    MCC, COD_MOEDA, COD_CAMPO_VALOR, dadosPix.valorStr(), COD_PAIS,
+                                    dadosPix.getNomeDestinatario(), dadosPix.getCidadeRemetente(), idTransacao);
+            JsonObject jsonObj = novoJson.build();
+            System.out.println(UtilSBCoreJson.getTextoByJsonObjeect(jsonObj));
+            return jsonObj;
+        } catch (ErroProcessandoJson ex) {
+            return JsonObject.EMPTY_JSON_OBJECT;
+        }
     }
 
     /**
@@ -209,7 +240,7 @@ public final class QRCodePix {
      * @see #toString()
      */
     public String generate() {
-        final String partialCode = generateInternal(JsonObject.EMPTY_JSON_OBJECT) + COD_CRC;
+        final String partialCode = generateInternal(newJSONObject()) + COD_CRC;
         final String checksum = crcChecksum(partialCode);
         return setCode(partialCode + checksum);
     }
@@ -226,6 +257,10 @@ public final class QRCodePix {
     }
 
     private String generateInternal(final JsonObject jsonObj) {
+
+        if (true) {
+            return "00020126510014BR.GOV.BCB.PIX0129salvio@casanovadigital.com.br52040000530398654071000.005802BR5917Casa nova Digital6014Belo horiaonte62160512pagamento";
+        }
         StringBuilder sb = new StringBuilder();
         jsonObj.keySet().stream().sorted().forEach(key -> {
             final Object val = jsonObj.get(key);

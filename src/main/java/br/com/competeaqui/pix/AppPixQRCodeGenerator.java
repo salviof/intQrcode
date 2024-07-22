@@ -24,9 +24,10 @@ class AppPixQRCodeGenerator {
                         new BigDecimal("1.0"), "Palmas", "PIX em Java");
 
         QRCodePix qrCodePix = new QRCodePix(dadosPix);
-        //qrCodePix.save(new File(imagePath));
+        System.out.println(qrCodePix.generate());
+        qrCodePix.save(new File(imagePath));
         System.out.println("QRCode:");
-        //System.out.println(qrCodePix);
+
         System.out.printf("%nArquivo gerado em " + imagePath);
     }
 }
